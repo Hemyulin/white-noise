@@ -16,8 +16,11 @@ class NoiseEngine {
     val bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, encoding)
     val samples = ShortArray(bufferSize  / 2)
 
+    var volume = 0.2f
+
     fun start() {
         if (isPlaying) return
+
 
         isPlaying = true
         audioTrack = AudioTrack.Builder().setTransferMode(AudioTrack.MODE_STREAM)
@@ -36,7 +39,8 @@ class NoiseEngine {
         nowPlaying = Thread {
         while(isPlaying){
             for (i in samples.indices) {
-                samples[i] = Random.nextInt(-32767, 32767).toShort()
+                val randomSample = Random.nextInt(-32767, 32767)
+                samples[i] = (randomSample * volume).toInt().toShort()
             }
 
             audioTrack?.write(samples, 0, samples.size)
