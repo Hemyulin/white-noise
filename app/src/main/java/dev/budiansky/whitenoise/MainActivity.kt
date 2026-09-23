@@ -7,12 +7,20 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,22 +45,37 @@ class MainActivity : ComponentActivity() {
         ContextCompat.startForegroundService(this, intent)
 
         setContent {
-            StopButton()
+            Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+            ) {
+                PlayStopButton()
+            }
         }
     }
 
     @Composable
-    fun StopButton() {
-            val context = LocalContext.current
+    fun PlayStopButton() {
+        val context = LocalContext.current
+        var isPlaying by remember { mutableStateOf(true) }
 
         Button(
             onClick = {
                 val intent = Intent(context, NoiseService::class.java)
-                intent.action = "STOP"
+
+                if (isPlaying) {
+                    intent.action = "STOP"
+                    isPlaying = false
+                } else {
+                    intent.action = "PLAY"
+                    isPlaying = true
+                }
+
                 ContextCompat.startForegroundService(context, intent)
             }
         ) {
-            Text("Stop")
+            Text(
+                if (isPlaying) "Stop" else "Play"
+            )
         }
     }
 }
