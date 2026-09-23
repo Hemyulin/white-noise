@@ -9,6 +9,8 @@ import android.os.Build
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.material3.Button
@@ -21,6 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,10 +75,14 @@ class MainActivity : ComponentActivity() {
                 }
 
                 ContextCompat.startForegroundService(context, intent)
-            }
+            },
+            modifier = Modifier.size(160.dp),
+            shape = CircleShape
+
         ) {
             Text(
-                if (isPlaying) "Stop" else "Play"
+                if (isPlaying) "Stop" else "Play",
+                fontSize = 24.sp
             )
         }
     }
