@@ -17,6 +17,7 @@ class NoiseEngine {
     val samples = ShortArray(bufferSize  / 2)
 
     var volume = 0.2f
+    var previousSample = 0f
 
     fun start() {
         if (isPlaying) return

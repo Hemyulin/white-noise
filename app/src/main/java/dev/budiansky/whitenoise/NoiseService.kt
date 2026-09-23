@@ -50,4 +50,12 @@ class NoiseService: Service() {
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        noiseEngine.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+
+        super.onTaskRemoved(rootIntent)
+    }
 }
