@@ -7,6 +7,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.budiansky.whitenoise.ui.theme.WhiteNoiseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,10 +52,15 @@ class MainActivity : ComponentActivity() {
         ContextCompat.startForegroundService(this, intent)
 
         setContent {
-            Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-            ) {
-                PlayStopButton()
+            WhiteNoiseTheme {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
+                ) {
+                    PlayStopButton()
+                }
             }
         }
     }
