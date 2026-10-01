@@ -2,6 +2,7 @@ package dev.budiansky.whitenoise
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import androidx.core.app.NotificationCompat
 import android.app.Service
 import android.content.Intent
@@ -31,10 +32,19 @@ class NoiseService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val openAppIntent = Intent(this, MainActivity::class.java)
+
+        val openAppPendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            openAppIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("White Noise")
             .setContentText("Playing")
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(openAppPendingIntent)
             .build()
 
         startForeground(1, notification)
