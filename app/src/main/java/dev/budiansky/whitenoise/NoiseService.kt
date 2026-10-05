@@ -6,8 +6,11 @@ import android.app.PendingIntent
 import androidx.core.app.NotificationCompat
 import android.app.Service
 import android.content.Intent
+import android.media.AudioDeviceInfo
 import android.os.IBinder
 import android.os.Build
+import android.media.AudioDeviceCallback
+import android.media.AudioManager
 
 
 class NoiseService: Service() {
@@ -16,6 +19,9 @@ class NoiseService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+        val audioManager = getSystemService(AudioManager::class.java)
+        audioManager.registerAudioDeviceCallback(audioDeviceCallback, null)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -34,6 +40,16 @@ class NoiseService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val openAppIntent = Intent(this, MainActivity::class.java)
 
+        val stopIntent = Intent(this, NoiseService::class.java)
+        stopIntent.action = "STOP"
+
+        val stopPendingIntent = PendingIntent.getService(
+            this,
+            1,
+            stopIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
         val openAppPendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -45,6 +61,11 @@ class NoiseService: Service() {
             .setContentText("Playing")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(openAppPendingIntent)
+            .addAction(
+                R.mipmap.ic_launcher,
+                "STOP",
+                stopPendingIntent
+            )
             .build()
 
         startForeground(1, notification)
@@ -67,5 +88,21 @@ class NoiseService: Service() {
         stopSelf()
 
         super.onTaskRemoved(rootIntent)
+    }
+
+    private val audioDeviceCallback = object : AudioDeviceCallback() {
+        override fun onAudioDevicesRemoved(
+            removedDevices: Array<AudioDeviceInfo>
+        ) {
+            for (removedDevice in removedDevices) {
+                if (
+                    removedDevice.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
+                    removedDevice.type == AudioDeviceInfo.TYPE_BLE_HEADSET ||
+                    removedDevice.type == AudioDeviceInfo.TYPE_BLE_SPEAKER
+                ) {
+                    noiseEngine.stop()
+                }
+            }
+        }
     }
 }
